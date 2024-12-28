@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const bunyan = require('bunyan');
-
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -24,6 +25,7 @@ const log = bunyan.createLogger({
 })
 const app = express();
 app.use(express.json())
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.send('API is running!');
