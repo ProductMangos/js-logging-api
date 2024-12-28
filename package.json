@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bunyan": "^1.8.15",
     "express": "^4.21.2"
   }
 }
