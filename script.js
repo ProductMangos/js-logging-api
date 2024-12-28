@@ -1,4 +1,7 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
 const bunyan = require('bunyan');
 
 const log = bunyan.createLogger({
@@ -52,6 +55,29 @@ app.post('/fatal', (req, res) => {
     log.fatal(response.message);
     res.send(response.message);
 })
+
+app.get('/getlogs', (req, res) => {
+    const logFilePath = path.join(__dirname, 'logging.log');
+
+    const stream = fs.createReadStream(logFilePath, { encoding: 'utf8' });
+    const rl = readline.createInterface({ input: stream });
+
+    let logs = [];
+
+    rl.on('line', (line) => {
+        logs.push(JSON.parse(line)); // Parse each log line as JSON
+    });
+
+    rl.on('close', () => {
+        res.json({ logs });
+    });
+
+    rl.on('error', (err) => {
+        console.error('Error reading log file:', err);
+        res.status(500).send('Error reading log file.');
+    });
+});
+
 
 app.listen(9999, () => {
     console.log('Server started on port 9999');
