@@ -4,6 +4,15 @@ const path = require('path');
 const readline = require('readline');
 const bunyan = require('bunyan');
 
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20, // Limit each IP to 100 requests per `window` (15 minutes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    message: 'Too many requests from this IP, please try again later.'
+  });
+
 const log = bunyan.createLogger({
     name: 'myapp',
     streams: [
@@ -17,40 +26,40 @@ const app = express();
 app.use(express.json())
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('API is running!');
 });
 
-app.post('/trace', (req, res) => {
+app.post('/trace', limiter,(req, res) => {
     const response = req.body;
     log.trace(response.message);
     res.send(response.message);
 })
 
-app.post('/debug', (req, res) => {
+app.post('/debug', limiter, (req, res) => {
     const response = req.body;
     log.debug(response.message);
     res.send(response.message);
 })
 
-app.post('/info', (req, res) => {
+app.post('/info', limiter, (req, res) => {
     const response = req.body;
     log.info(response.message);
     res.send(response.message);
 })
 
-app.post('/warn', (req, res) => {
+app.post('/warn', limiter, (req, res) => {
     const response = req.body;
     log.warn(response.message);
     res.send(response.message);
 })
 
-app.post('/error', (req, res) => {
+app.post('/error', limiter, (req, res) => {
     const response = req.body;
     log.error(response.message);
     res.send(response.message);
 })
 
-app.post('/fatal', (req, res) => {
+app.post('/fatal', limiter, (req, res) => {
     const response = req.body;
     log.fatal(response.message);
     res.send(response.message);
@@ -65,7 +74,7 @@ app.get('/getlogs', (req, res) => {
     let logs = [];
 
     rl.on('line', (line) => {
-        logs.push(JSON.parse(line)); // Parse each log line as JSON
+        logs.push(JSON.parse(line));
     });
 
     rl.on('close', () => {
