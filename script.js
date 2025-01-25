@@ -76,42 +76,42 @@ app.get('/', (req, res) => {
 
 app.get('/test', (req, res) => {
   const response = req.body;
-  const logData = JSON.stringify(trackingAlerts(response.appName, response.message).info, null, 2);
+  const logData = JSON.stringify(trackingAlerts(response.appname, response.message).info, null, 2);
   fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
   res.send('Log appended to test.log');
 });
 
 app.post('/trace', limiter,(req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appName, response.message).trace, null, 2);
+    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).trace, null, 2);
     fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
     res.send("trace logged");
 })
 
 app.post('/info', limiter, (req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appName, response.message).info, null, 2);
+    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).info, null, 2);
     fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
     res.send("info logged");
 })
 
 app.post('/warn', limiter, (req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appName, response.message).warn, null, 2);
+    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).warn, null, 2);
     fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
     res.send("warn logged");
 })
 
 app.post('/error', limiter, (req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appName, response.message).error, null, 2);
+    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).error, null, 2);
     fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
     res.send("error logged");
 })
 
 app.post('/fatal', limiter, (req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appName, response.message).fatal, null, 2);
+    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).fatal, null, 2);
     fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
     res.send("fatal logged");
 })
