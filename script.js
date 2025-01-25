@@ -2,10 +2,11 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const bunyan = require('bunyan');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const os = require('os');
+const pool = require("./db");
+const { log } = require('console');
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -74,18 +75,21 @@ app.get('/', (req, res) => {
     res.send('API is running!');
 });
 
-app.get('/test', (req, res) => {
-  const response = req.body;
-  const logData = JSON.stringify(trackingAlerts(response.appname, response.message).info, null, 2);
-  fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
-  res.send('Log appended to test.log');
+app.get('/test', async (req, res) => {
+  const posts = await pool.query("INSERT INTO logs (appname, machine_name, msg, time, type, level) VALUES ('js-logger-api', 'MacBook-Pro', 'hello, world!', '2025-01-23T03:24:15.067Z', 'trace', 20) RETURNING *");
+  res.send({ posts });
 });
 
-app.post('/trace', limiter,(req, res) => {
+const loggingIntoDB = async(appName, machineName, msg, time, type, level) => {
+  const posts = await pool.query("INSERT INTO logs (appname, machine_name, msg, time, type, level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [appName, machineName, msg, time, type, level]);
+  return posts;
+}
+
+app.post('/trace', limiter, (req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).trace, null, 2);
-    fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
-    res.send("trace logged");
+    const logData = trackingAlerts(response.appname, response.message).trace;
+    const result = loggingIntoDB(logData.appName, logData.name, logData.msg, logData.time, logData.type, logData.level);
+    res.send(result);
 })
 
 app.post('/info', limiter, (req, res) => {
