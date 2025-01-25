@@ -1,0 +1,43 @@
+{
+  "name": "MacBook-Pro",
+  "msg": "hello, world!",
+  "time": "2025-01-23T03:24:15.067Z",
+  "level": 20
+},
+{
+  "name": "MacBook-Pro",
+  "msg": "hello, world!",
+  "time": "2025-01-23T03:24:17.882Z",
+  "level": 20
+},
+{
+  "appName": "app1",
+  "name": "MacBook-Pro",
+  "msg": "yo",
+  "time": "2025-01-25T02:16:12.833Z",
+  "level": 30
+},
+{
+  "appName": "app1",
+  "name": "MacBook-Pro",
+  "msg": "yo",
+  "time": "2025-01-25T02:17:04.508Z",
+  "type": "warn",
+  "level": 30
+},
+{
+  "appName": "app1",
+  "name": "MacBook-Pro",
+  "msg": "yo",
+  "time": "2025-01-25T02:18:01.984Z",
+  "type": "warn",
+  "level": 30
+},
+{
+  "appName": "app1",
+  "name": "MacBook-Pro",
+  "msg": "{issue: error}",
+  "time": "2025-01-25T02:18:22.778Z",
+  "type": "error",
+  "level": 40
+},
