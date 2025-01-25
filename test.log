@@ -41,3 +41,11 @@
   "type": "error",
   "level": 40
 },
+{
+  "appName": "app1",
+  "name": "MacBook-Pro",
+  "msg": "{issue: error}",
+  "time": "2025-01-25T23:32:40.723Z",
+  "type": "error",
+  "level": 40
+},

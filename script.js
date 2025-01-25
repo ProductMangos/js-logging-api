@@ -81,8 +81,12 @@ app.get('/test', async (req, res) => {
 });
 
 const loggingIntoDB = async(appName, machineName, msg, time, type, level) => {
-  const posts = await pool.query("INSERT INTO logs (appname, machine_name, msg, time, type, level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [appName, machineName, msg, time, type, level]);
-  return posts;
+  try {
+    await pool.query("INSERT INTO logs (appname, machine_name, msg, time, type, level) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [appName, machineName, msg, time, type, level]);
+  } catch (error) {
+    console.log(error);
+  }
+  return "success";
 }
 
 app.post('/trace', limiter, (req, res) => {
@@ -94,30 +98,30 @@ app.post('/trace', limiter, (req, res) => {
 
 app.post('/info', limiter, (req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).info, null, 2);
-    fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
-    res.send("info logged");
+    const logData = trackingAlerts(response.appname, response.message).info;
+    const result = loggingIntoDB(logData.appName, logData.name, logData.msg, logData.time, logData.type, logData.level);
+    res.send(result);
 })
 
 app.post('/warn', limiter, (req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).warn, null, 2);
-    fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
-    res.send("warn logged");
+    const logData = trackingAlerts(response.appname, response.message).warn;
+    const result = loggingIntoDB(logData.appName, logData.name, logData.msg, logData.time, logData.type, logData.level);
+    res.send(result);
 })
 
 app.post('/error', limiter, (req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).error, null, 2);
-    fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
-    res.send("error logged");
+    const logData = trackingAlerts(response.appname, response.message).error;
+    const result = loggingIntoDB(logData.appName, logData.name, logData.msg, logData.time, logData.type, logData.level);
+    res.send(result);
 })
 
 app.post('/fatal', limiter, (req, res) => {
     const response = req.body;
-    const logData = JSON.stringify(trackingAlerts(response.appname, response.message).fatal, null, 2);
-    fs.writeFileSync('test.log', logData + ',\n', { flag: 'a' });
-    res.send("fatal logged");
+    const logData = trackingAlerts(response.appname, response.message).fatal;
+    const result = loggingIntoDB(logData.appName, logData.name, logData.msg, logData.time, logData.type, logData.level);
+    res.send(result);
 })
 
 app.get('/getlogs', (req, res) => {
